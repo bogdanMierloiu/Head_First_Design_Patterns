@@ -5,6 +5,7 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/strategy_pattern/pom.xml" />
+        <option value="$PROJECT_DIR$/observer_pattern/pom.xml" />
       </list>
     </option>
   </component>
