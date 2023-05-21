@@ -1,6 +1,9 @@
 package com.bogdancode.weather_station;
 
-public class HeatIndex implements Observer, DisplayElement {
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+public class HeatIndex implements PropertyChangeListener, DisplayElement {
 
     private float temperature;
 
@@ -8,20 +11,22 @@ public class HeatIndex implements Observer, DisplayElement {
 
     private float heatIndex;
 
-    Subject weatherData;
 
-    public HeatIndex(Subject weatherData) {
-        this.weatherData = weatherData;
-        weatherData.registerObserver(this);
+    public HeatIndex() {
     }
 
-    @Override
-    public void display() {
-        System.out.println("Heat index is: " + heatIndex);
+
+    public void propertyChange(PropertyChangeEvent event) {
+        String propertyName = event.getPropertyName();
+        if ("weatherData".equals(propertyName)) {
+            WeatherData weatherData = (WeatherData) event.getNewValue();
+            float newTemperature = weatherData.getTemperature();
+            float newHumidity = weatherData.getHumidity();
+            update(newTemperature, newHumidity);
+        }
     }
 
-    @Override
-    public void update(float temp, float humidity, float pressure) {
+    public void update(float temp, float humidity) {
         this.temperature = temp;
         this.humidity = humidity;
         this.heatIndex = computeHeatIndex(temp, humidity);
@@ -37,5 +42,10 @@ public class HeatIndex implements Observer, DisplayElement {
                 (0.000000197483 * (t * rh * rh * rh)) - (0.0000000218429 * (t * t * t * rh * rh)) +
                 0.000000000843296 * (t * t * rh * rh * rh)) -
                 (0.0000000000481975 * (t * t * t * rh * rh * rh)));
+    }
+
+    @Override
+    public void display() {
+        System.out.println("Heat index is: " + heatIndex);
     }
 }

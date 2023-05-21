@@ -14,7 +14,6 @@ public class ForecastDisplay implements PropertyChangeListener, DisplayElement {
     }
 
     public void updateTemperature(float newTemperature) {
-        this.previousTemperature = this.currentTemperature;
         this.currentTemperature = newTemperature;
         display();
     }
@@ -22,8 +21,11 @@ public class ForecastDisplay implements PropertyChangeListener, DisplayElement {
     @Override
     public void propertyChange(PropertyChangeEvent event) {
         String propertyName = event.getPropertyName();
-        if ("temperature".equals(propertyName)) {
-            float newTemperature = (float) event.getNewValue();
+        if ("weatherData".equals(propertyName)) {
+            WeatherData newWeatherData = (WeatherData) event.getNewValue();
+            WeatherData oldWeatherData = (WeatherData) event.getOldValue();
+            float newTemperature = newWeatherData.getTemperature();
+            this.previousTemperature = oldWeatherData.getTemperature();
             updateTemperature(newTemperature);
         }
     }

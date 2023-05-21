@@ -12,24 +12,20 @@ public class CurrentConditionsDisplay implements PropertyChangeListener, Display
     public CurrentConditionsDisplay() {
     }
 
-    public void updateTemperature(float newTemperature) {
-        temperature = newTemperature;
+    public void update(float newTemperature, float newHumidity) {
+        this.temperature = newTemperature;
+        this.humidity = newHumidity;
         display();
     }
 
-    public void updateHumidity(float newHumidity) {
-        humidity = newHumidity;
-        display();
-    }
 
     public void propertyChange(PropertyChangeEvent event) {
         String propertyName = event.getPropertyName();
-        if ("temperature".equals(propertyName)) {
-            float newTemperature = (float) event.getNewValue();
-            updateTemperature(newTemperature);
-        } else if ("humidity".equals(propertyName)) {
-            float newHumidity = (float) event.getNewValue();
-            updateHumidity(newHumidity);
+        if ("weatherData".equals(propertyName)) {
+            WeatherData weatherData = (WeatherData) event.getNewValue();
+            float newTemperature = weatherData.getTemperature();
+            float newHumidity = weatherData.getHumidity();
+            update(newTemperature, newHumidity);
         }
     }
 

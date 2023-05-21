@@ -11,9 +11,25 @@ import java.util.List;
 public class StatisticsDisplay implements PropertyChangeListener, DisplayElement {
 
     private float temperature;
-    private List<Float> temperatures = new ArrayList<>();
+    private final List<Float> temperatures = new ArrayList<>();
 
     public StatisticsDisplay() {
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        String propertyName = event.getPropertyName();
+        if ("weatherData".equals(propertyName)) {
+            WeatherData weatherData = (WeatherData) event.getNewValue();
+            float newTemperature = weatherData.getTemperature();
+            updateTemperature(newTemperature);
+        }
+    }
+
+    private void updateTemperature(float newTemperature) {
+        this.temperature = newTemperature;
+        temperatures.add(temperature);
+        display();
     }
 
     @Override
@@ -31,20 +47,5 @@ public class StatisticsDisplay implements PropertyChangeListener, DisplayElement
         }
         float averageValue = sum / temperatures.size();
         System.out.println("Avg/Max/Min temperature = " + averageValue + "/" + maxValue + "/" + minValue);
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent event) {
-        String propertyName = event.getPropertyName();
-        if ("temperature".equals(propertyName)) {
-            float newTemperature = (float) event.getNewValue();
-            updateTemperature(newTemperature);
-        }
-    }
-
-    private void updateTemperature(float newTemperature) {
-        this.temperature = newTemperature;
-        temperatures.add(temperature);
-        display();
     }
 }

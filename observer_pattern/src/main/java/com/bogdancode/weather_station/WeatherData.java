@@ -24,18 +24,22 @@ public class WeatherData {
 
 
     public void setMeasurements(float temperature, float humidity, float pressure) {
-        float oldTemperature = this.temperature;
-        float oldHumidity = this.humidity;
-        float oldPressure = this.pressure;
 
+        WeatherData oldWeatherData = new WeatherData();
+
+        //Construirea obiectului oldWheaterData
+        oldWeatherData.setTemperature(this.temperature);
+        oldWeatherData.setHumidity(this.humidity);
+        oldWeatherData.setPressure(this.pressure);
+
+        //Actualizarea valorilor curente
         this.temperature = temperature;
         this.humidity = humidity;
         this.pressure = pressure;
 
+        //Notificare observatori
+        propertyChangeSupport.firePropertyChange("weatherData", oldWeatherData, this);
 
-        propertyChangeSupport.firePropertyChange("temperature", oldTemperature, temperature);
-        propertyChangeSupport.firePropertyChange("humidity", oldHumidity, humidity);
-        propertyChangeSupport.firePropertyChange("pressure", oldPressure, pressure);
     }
 
     public float getTemperature() {
@@ -48,5 +52,17 @@ public class WeatherData {
 
     public float getPressure() {
         return pressure;
+    }
+
+    public void setTemperature(float temperature) {
+        this.temperature = temperature;
+    }
+
+    public void setHumidity(float humidity) {
+        this.humidity = humidity;
+    }
+
+    public void setPressure(float pressure) {
+        this.pressure = pressure;
     }
 }
