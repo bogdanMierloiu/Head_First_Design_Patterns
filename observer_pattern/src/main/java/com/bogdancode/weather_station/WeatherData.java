@@ -1,47 +1,41 @@
 package com.bogdancode.weather_station;
 
-import java.util.ArrayList;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
-public class WeatherData implements Subject {
+public class WeatherData {
 
-    private ArrayList<Observer> observers;
+    PropertyChangeSupport propertyChangeSupport;
     float temperature;
     float humidity;
     float pressure;
 
     public WeatherData() {
-        observers = new ArrayList<>();
+        propertyChangeSupport = new PropertyChangeSupport(this);
     }
 
-    @Override
-    public void registerObserver(Observer o) {
-        observers.add(o);
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
-    @Override
-    public void removeObserver(Observer o) {
-        int i = observers.indexOf(o);
-        if (i >= 0) {
-            observers.remove(i);
-        }
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
-    @Override
-    public void notifyObservers() {
-        for (Observer observer : observers) {
-            observer.update(temperature, humidity, pressure);
-        }
-    }
-
-    void measurementsChanged() {
-        notifyObservers();
-    }
 
     public void setMeasurements(float temperature, float humidity, float pressure) {
+        float oldTemperature = this.temperature;
+        float oldHumidity = this.humidity;
+        float oldPressure = this.pressure;
+
         this.temperature = temperature;
         this.humidity = humidity;
         this.pressure = pressure;
-        measurementsChanged();
+
+
+        propertyChangeSupport.firePropertyChange("temperature", oldTemperature, temperature);
+        propertyChangeSupport.firePropertyChange("humidity", oldHumidity, humidity);
+        propertyChangeSupport.firePropertyChange("pressure", oldPressure, pressure);
     }
 
     public float getTemperature() {
@@ -49,12 +43,10 @@ public class WeatherData implements Subject {
     }
 
     public float getHumidity() {
-
         return humidity;
     }
 
     public float getPressure() {
-
         return pressure;
     }
 }

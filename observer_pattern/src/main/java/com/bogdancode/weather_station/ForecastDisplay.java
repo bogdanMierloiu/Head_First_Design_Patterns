@@ -1,20 +1,42 @@
 package com.bogdancode.weather_station;
 
-public class ForecastDisplay implements Observer, DisplayElement {
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-    Subject weatherData;
+public class ForecastDisplay implements PropertyChangeListener, DisplayElement {
 
-    public ForecastDisplay(Subject weatherData) {
-        this.weatherData = weatherData;
+    private float previousTemperature;
+
+    private float currentTemperature;
+
+
+    public ForecastDisplay() {
+    }
+
+    public void updateTemperature(float newTemperature) {
+        this.previousTemperature = this.currentTemperature;
+        this.currentTemperature = newTemperature;
+        display();
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        String propertyName = event.getPropertyName();
+        if ("temperature".equals(propertyName)) {
+            float newTemperature = (float) event.getNewValue();
+            updateTemperature(newTemperature);
+        }
     }
 
     @Override
     public void display() {
-
-    }
-
-    @Override
-    public void update(float temp, float humidity, float pressure) {
+        if (currentTemperature > previousTemperature) {
+            System.out.println("Temperatura a crescut");
+        } else if (currentTemperature < previousTemperature) {
+            System.out.println("Temperatura a scazut!");
+        } else {
+            System.out.println("Temperatura a ramas la fel!");
+        }
 
     }
 }

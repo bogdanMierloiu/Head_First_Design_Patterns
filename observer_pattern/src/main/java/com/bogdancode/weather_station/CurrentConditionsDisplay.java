@@ -1,24 +1,38 @@
 package com.bogdancode.weather_station;
 
-public class CurrentConditionsDisplay implements Observer, DisplayElement {
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+public class CurrentConditionsDisplay implements PropertyChangeListener, DisplayElement {
 
     private float temperature;
     private float humidity;
-    private Subject weatherData;
 
-    public CurrentConditionsDisplay(Subject weatherData) {
-        this.weatherData = weatherData;
-        weatherData.registerObserver(this);
+
+    public CurrentConditionsDisplay() {
     }
 
-    @Override
-    public void update(float temp, float humidity, float pressure) {
-        this.temperature = temp;
-        this.humidity = humidity;
+    public void updateTemperature(float newTemperature) {
+        temperature = newTemperature;
         display();
     }
 
-    @Override
+    public void updateHumidity(float newHumidity) {
+        humidity = newHumidity;
+        display();
+    }
+
+    public void propertyChange(PropertyChangeEvent event) {
+        String propertyName = event.getPropertyName();
+        if ("temperature".equals(propertyName)) {
+            float newTemperature = (float) event.getNewValue();
+            updateTemperature(newTemperature);
+        } else if ("humidity".equals(propertyName)) {
+            float newHumidity = (float) event.getNewValue();
+            updateHumidity(newHumidity);
+        }
+    }
+
     public void display() {
         System.out.println("Current conditions: " + temperature + "F degrees and " +
                 humidity + "% humidity");
